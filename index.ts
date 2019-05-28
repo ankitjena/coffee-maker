@@ -1,24 +1,37 @@
-import { Indicator, IndicatorLight } from "./src/Indicator";
-import { Boiler, BoilerHeater } from "./src/Boiler";
-import { Button, BrewButton } from "./src/Button";
-import { Plate, PlateWarmer } from "./src/Plate";
-import { Valve, ReliefValve } from "./src/Valve";
+import { ErrorHandler, ErrorInterface } from './src/Error'
+import { RecipeDetails, Recipe} from './src/Recipe'
 
-class Brew {
-  private indicator: Indicator
-  private boiler: Boiler
-  private button: Button
-  private plate: Plate
-  private valve: Valve
-  
-  public start(): any {
-    this.indicator = new IndicatorLight()
-    this.boiler = new BoilerHeater()
-    this.button = new BrewButton()
-    this.plate = new PlateWarmer()
-    this.valve = new ReliefValve()
+class PrepareCoffeeMaker implements Recipe{
+  Water: number
+  Milk: number
+
+  constructor(water: number, milk: number) {
+    this.Water = water
+    this.Milk = milk
   }
 }
 
-const brew = new Brew()
-brew.start()
+class BrewCoffee {
+  initialAmount: Recipe
+  error: ErrorInterface
+  constructor(initial: Recipe) {
+    this.initialAmount = initial
+    this.error = new ErrorHandler()
+  }
+  public brew(recipe: Recipe): void {
+
+    if(this.error.checkError(this.initialAmount, recipe)){
+      console.log("Start brewing")
+      this.initialAmount.Water -= recipe.Water
+      this.initialAmount.Milk -= recipe.Milk
+      console.log("Finish brewing")
+      console.log(this.initialAmount)
+    }
+  }
+}
+
+const initial = new PrepareCoffeeMaker(1000, 1000)
+const coffee = new BrewCoffee(initial)
+coffee.brew(RecipeDetails.Latte)
+coffee.brew(RecipeDetails.Espresso)
+coffee.brew(RecipeDetails.Capucchino)
