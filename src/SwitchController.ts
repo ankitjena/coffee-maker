@@ -1,3 +1,6 @@
+/**
+ * On or Off switch for the coffee machine
+ */
 export interface Controller {
   On(): void
   Off(): void

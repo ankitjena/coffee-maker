@@ -2,6 +2,9 @@ import { CoffeeController } from './src/CoffeeController'
 import { UserInput } from './src/UserInput'
 import { Recipes} from './src/Recipe'
 
+/**
+ * Main function which starts up the coffee machine, provides inputs and brews coffee
+ */
 const main = async() => {
   const coffeeInstance = new CoffeeController()
   const userInput = new UserInput()
