@@ -5,8 +5,14 @@ import { SwitchController, Controller } from './SwitchController'
 import { Recipe } from './Recipe'
 import { InputQuantity } from './UserInput'
 
+/**
+ * Promisify setTimeOut for async/await
+ */
 const sleep = promisify(setTimeout)
 
+/**
+ * Types with error messages
+ */
 enum ErrorCodes {
   milkEmpty = "Milk container is empty. Refill",
   waterEmpty = "Water container is empty. Refill",
@@ -20,6 +26,10 @@ export class CoffeeController {
   private waterContainer: ContainerDetail
   private display: DisplayController
 
+  /**
+   * Intitialize the coffee machine with provided values for ingredients
+   * @param values ingredients in form of InputQuantity
+   */
   public init(values: InputQuantity): void {
     this.switch = new SwitchController()
     this.switch.On()
@@ -29,6 +39,10 @@ export class CoffeeController {
     this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER, values.coffeePowder , 500)
   }
 
+  /**
+   * Check if brewing is possible with given values and current values of containers.
+   * @param recipe User input recipe
+   */
   public checkBrew(recipe: Recipe): boolean {
     if(this.milkContainer.isEmpty() || !this.milkContainer.checkFeasibility(recipe.Milk)) {
       this.display.show(Status.DANGER, ErrorCodes.milkEmpty) 
@@ -48,6 +62,10 @@ export class CoffeeController {
     return true
   }
 
+  /**
+   * Brew the coffee
+   * @param recipe User input recipe
+   */
   public async brew(recipe: Recipe): Promise<void> {
     if(!this.switch.isOn()) {
       return
@@ -56,7 +74,7 @@ export class CoffeeController {
       return
     }
     await this.display.show(Status.CORRECT, "Brewing Coffee for you ...")
-    await sleep(10000)
+    await sleep(10000) //time taken to brew coffee(assumption)
     this.milkContainer.useContent(recipe.Milk)
     this.waterContainer.useContent(recipe.Water)
     this.coffeePowderContainer.useContent(recipe.Coffee)

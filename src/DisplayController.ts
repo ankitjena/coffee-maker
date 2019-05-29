@@ -1,5 +1,8 @@
 import chalk from 'chalk'
 
+/**
+ * Types of status
+ */
 export enum Status {
   CORRECT,
   WARNING,
@@ -7,6 +10,11 @@ export enum Status {
 }
 
 export class DisplayController {
+  /**
+   * 
+   * @param type the type of message - correct, warning or danger
+   * @param message message to be displayed
+   */
   public async show(type: Status, message: string): Promise<void> {
     if(type === Status.CORRECT) {
       console.log(chalk.green(message))
