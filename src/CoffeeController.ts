@@ -1,9 +1,8 @@
 import { promisify } from 'util'
 import { Status, DisplayController } from './DisplayController'
 import { Container, ContainerDetail, ContainerTypes } from './Container'
-import { SwitchController, Controller } from './SwitchController'
+import { SwitchController, OnOffControl } from './SwitchController'
 import { Recipe } from './Recipe'
-import { InputQuantity } from './UserInput'
 
 /**
  * Promisify setTimeOut for async/await
@@ -18,9 +17,17 @@ enum ErrorCodes {
   waterEmpty = "Water container is empty. Refill",
   powderEmpty = "Out of Coffee Powder. Restock"
 }
+/**
+ * Input ingredients structure
+ */
+interface InputQuantity {
+  milk: number
+  water: number
+  coffeePowder: number
+}
 
 export class CoffeeController {
-  private switch: Controller
+  private switch: OnOffControl
   private milkContainer: ContainerDetail
   private coffeePowderContainer: ContainerDetail
   private waterContainer: ContainerDetail

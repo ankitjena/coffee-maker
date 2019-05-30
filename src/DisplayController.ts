@@ -1,7 +1,10 @@
 import chalk from 'chalk'
 
 /**
- * Types of status
+ * Types of status, 
+ * Correct shows system is working properly
+ * warning warns the user
+ * error shows critical error in machine
  */
 export enum Status {
   CORRECT,
