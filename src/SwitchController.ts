@@ -1,13 +1,13 @@
 /**
  * On or Off switch for the coffee machine
  */
-export interface Controller {
+export interface OnOffControl {
   On(): void
   Off(): void
   isOn(): boolean
 }
 
-export class SwitchController implements Controller{
+export class SwitchController implements OnOffControl{
   
   private state: boolean
   
