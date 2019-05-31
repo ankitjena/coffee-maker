@@ -23,7 +23,7 @@ enum ErrorCodes {
 interface InputQuantity {
   milk: number
   water: number
-  coffeePowder: number
+  coffee: number
 }
 
 export class CoffeeController {
@@ -43,7 +43,7 @@ export class CoffeeController {
     this.display = new DisplayController()
     this.milkContainer = new Container(ContainerTypes.MILK, values.milk , 1000)
     this.waterContainer = new Container(ContainerTypes.WATER, values.water , 1500)
-    this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER, values.coffeePowder , 500)
+    this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER, values.coffee , 500)
   }
 
   /**
@@ -81,11 +81,12 @@ export class CoffeeController {
       return
     }
     await this.display.show(Status.CORRECT, "Brewing Coffee for you ...")
+    await this.milkContainer.useContent(recipe.Milk)
+    await this.waterContainer.useContent(recipe.Water)
+    await this.coffeePowderContainer.useContent(recipe.Coffee)
     await sleep(10000) //time taken to brew coffee(assumption)
-    this.milkContainer.useContent(recipe.Milk)
-    this.waterContainer.useContent(recipe.Water)
-    this.coffeePowderContainer.useContent(recipe.Coffee)
     await this.display.show(Status.CORRECT, "Finished Brewing")
+    await this.display.show(Status.CORRECT, "Thanks for using the machine")
     await sleep(2000)
   }
 }
