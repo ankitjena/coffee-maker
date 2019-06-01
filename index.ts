@@ -1,22 +1,36 @@
 #! /usr/bin/env node
 import { promisify } from 'util'
-import { writeFile } from 'fs'
+import { writeFile, copyFile, access, constants } from 'fs'
 import chalk from 'chalk'
 import { CoffeeController } from './src/CoffeeController';
 
-const inquirer = require('inquirer')
+import inquirer = require('inquirer')
+import os = require('os');
 
 /**
  * cli method supports async/await
  */
-const cli = async(): Promise<void> => {
+export const cli = async(): Promise<void> => {
   /**
    * Async writefile and file path
    */
   const writeFileAsync = promisify(writeFile)
-  const recipesPath = `${process.cwd()}/src/Recipes.json`
+  const copyFileAsync = promisify(copyFile)
+  const accessAsync = promisify(access)
 
-  const recipes: object = require('./src/Recipes.json')
+  const recipesPath = `${process.cwd()}/src/Recipes.json`
+  const outputRecipesPath = `${os.homedir}/.Recipes.json`
+
+  let recipes: object
+  try {
+    await accessAsync(outputRecipesPath, constants.F_OK)
+    recipes = require(outputRecipesPath)
+  } catch(err) {
+    recipes = require(recipesPath)
+  }
+  
+  await copyFileAsync(recipesPath, outputRecipesPath)
+
   /**
    * Inquirer question to be asked
    */
@@ -46,7 +60,7 @@ const cli = async(): Promise<void> => {
       const newRecipeName: string = name
       const newRecipeDetails: object = {"Water": water, "Milk": milk, "Coffee": coffee}
       recipes[newRecipeName] = newRecipeDetails
-      await writeFileAsync(recipesPath, JSON.stringify(recipes, undefined, 2))
+      await writeFileAsync(outputRecipesPath, JSON.stringify(recipes, undefined, 2))
       console.log(chalk.green("Recipe added"))
     })
     /**
