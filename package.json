@@ -1,13 +1,13 @@
 {
-  "name": "coffee-maker",
+  "name": "tscoffee",
   "version": "1.0.0",
   "description": "",
-  "main": "./index.js",
+  "main": "./index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "ts-coffee": "./index.ts"
+    "tscoffee": "./lib/tscoffee.js"
   },
   "keywords": [],
   "author": "",
