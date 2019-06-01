@@ -18,7 +18,7 @@ export const cli = async(): Promise<void> => {
   const copyFileAsync = promisify(copyFile)
   const accessAsync = promisify(access)
 
-  const recipesPath = `${process.cwd()}/src/Recipes.json`
+  const recipesPath = `${process.cwd()}/lib/Recipes.json`
   const outputRecipesPath = `${os.homedir}/.Recipes.json`
 
   let recipes: object
@@ -27,9 +27,9 @@ export const cli = async(): Promise<void> => {
     recipes = require(outputRecipesPath)
   } catch(err) {
     recipes = require(recipesPath)
+    await copyFileAsync(recipesPath, outputRecipesPath)
   }
   
-  await copyFileAsync(recipesPath, outputRecipesPath)
 
   /**
    * Inquirer question to be asked
