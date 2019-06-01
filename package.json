@@ -2,12 +2,13 @@
   "name": "tscoffee",
   "version": "1.0.0",
   "description": "",
-  "main": "./index.ts",
+  "main": "./dist/index.js",
   "scripts": {
+    "build": "tsc --outDir dist lib/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "tscoffee": "./lib/tscoffee.js"
+    "tscoffee": "./dist/index.js"
   },
   "keywords": [],
   "author": "",
