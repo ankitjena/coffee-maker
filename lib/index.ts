@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 import { promisify } from 'util'
 import { writeFile, copyFile, access, constants } from 'fs'
 import chalk from 'chalk'
@@ -88,4 +87,3 @@ export const cli = async(): Promise<void> => {
     .help('h')
     .alias('h', 'help').argv
 }
-cli()

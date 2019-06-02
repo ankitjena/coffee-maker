@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -150,4 +149,3 @@ exports.cli = function () { return __awaiter(_this, void 0, void 0, function () 
         }
     });
 }); };
-exports.cli();
