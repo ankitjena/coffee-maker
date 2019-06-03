@@ -1,8 +1,9 @@
 {
   "name": "tscoffee",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./bin/index.js",
+  "homepage": "https://github.com/ankitjena/coffee-maker",
   "scripts": {
     "build": "tsc --outDir dist lib/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
