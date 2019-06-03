@@ -1,10 +1,39 @@
 import { promisify } from 'util'
-import { writeFile, copyFile, access, constants } from 'fs'
+import { writeFile, access, constants } from 'fs'
 import chalk from 'chalk'
 import { CoffeeController } from './src/CoffeeController';
 
 import inquirer = require('inquirer')
 import os = require('os');
+
+const defaultRecipes = {
+  "Latte": {
+    "Water": 40,
+    "Milk": 20,
+    "Coffee": 20
+  },
+  "Black": {
+    "Water": 60,
+    "Milk": 0,
+    "Coffee": 20
+  },
+  "Capucchino": {
+    "Water": 30,
+    "Milk": 40,
+    "Coffee": 20
+  },
+  "Espresso": {
+    "Water": 30,
+    "Milk": 30,
+    "Coffee": 20
+  }
+}
+
+const defaultContainer = {
+  "Milk": 0,
+  "Water": 0,
+  "Coffee": 0
+}
 
 /**
  * cli method supports async/await
@@ -14,22 +43,31 @@ export const cli = async(): Promise<void> => {
    * Async writefile and file path
    */
   const writeFileAsync = promisify(writeFile)
-  const copyFileAsync = promisify(copyFile)
   const accessAsync = promisify(access)
-
-  const recipesPath = `${process.cwd()}/lib/Recipes.json`
+  
   const outputRecipesPath = `${os.homedir}/.Recipes.json`
-
+  const outputContainerPath = `${os.homedir}/.Container.json`
+  
   let recipes: object
   try {
     await accessAsync(outputRecipesPath, constants.F_OK)
     recipes = require(outputRecipesPath)
   } catch(err) {
-    recipes = require(recipesPath)
-    await copyFileAsync(recipesPath, outputRecipesPath)
+    recipes = defaultRecipes
+    await writeFileAsync(outputRecipesPath, JSON.stringify(recipes))
   }
   
-
+  let container: object
+  try {
+    await accessAsync(outputContainerPath, constants.F_OK)
+    container = require(outputContainerPath)
+  } catch(err) {
+    container = defaultContainer
+    await writeFileAsync(outputContainerPath, JSON.stringify(container))
+  }
+  
+  const coffeeInstance = new CoffeeController()
+  
   /**
    * Inquirer question to be asked
    */
@@ -59,8 +97,17 @@ export const cli = async(): Promise<void> => {
       const newRecipeName: string = name
       const newRecipeDetails: object = {"Water": water, "Milk": milk, "Coffee": coffee}
       recipes[newRecipeName] = newRecipeDetails
-      await writeFileAsync(outputRecipesPath, JSON.stringify(recipes, undefined, 2))
+      await writeFileAsync(outputRecipesPath, JSON.stringify(recipes))
       console.log(chalk.green("Recipe added"))
+    })
+    .command('init', 'Initialize the the ingredients of the coffee machine', (yargs) => {
+      return yargs.option('milk')
+                  .option('water')
+                  .option('coffee')
+    },
+    async ({milk, water, coffee}) => {
+      await coffeeInstance.initContainer({milk, water, coffee})
+      console.log(chalk.green("Success"))
     })
     /**
      * Brews coffee based on the recipe provided. If no recipe provided then
@@ -79,8 +126,6 @@ export const cli = async(): Promise<void> => {
         name = answer.recipe
       }
 
-      const coffeeInstance = new CoffeeController()
-      coffeeInstance.init({milk: 200, water: 300, coffee: 100})
       await coffeeInstance.brew(recipes[name])
       
     })

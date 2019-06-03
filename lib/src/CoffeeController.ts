@@ -37,31 +37,45 @@ export class CoffeeController {
    * Intitialize the coffee machine with provided values for ingredients
    * @param values ingredients in form of InputQuantity
    */
-  public init(values: InputQuantity): void {
+  public async initContainer(values?: InputQuantity): Promise<void> {
+    if(values){
+      this.milkContainer = new Container(ContainerTypes.MILK)
+      await this.milkContainer.init(values.milk, 1000)
+      this.waterContainer = new Container(ContainerTypes.WATER)
+      await this.waterContainer.init(values.water , 1500)
+      this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER)
+      await this.coffeePowderContainer.init(values.coffee , 500)
+    }
+    else {
+      this.milkContainer = new Container(ContainerTypes.MILK)
+      this.waterContainer = new Container(ContainerTypes.WATER)
+      this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER)
+    }
+  }
+
+  public prep(): void {
     this.switch = new SwitchController()
     this.switch.On()
     this.display = new DisplayController()
-    this.milkContainer = new Container(ContainerTypes.MILK, values.milk , 1000)
-    this.waterContainer = new Container(ContainerTypes.WATER, values.water , 1500)
-    this.coffeePowderContainer = new Container(ContainerTypes.COFFEE_POWDER, values.coffee , 500)
+    this.initContainer()
   }
 
   /**
    * Check if brewing is possible with given values and current values of containers.
    * @param recipe User input recipe
    */
-  public checkBrew(recipe: Recipe): boolean {
-    if(this.milkContainer.isEmpty() || !this.milkContainer.checkFeasibility(recipe.Milk)) {
+  public async checkBrew(recipe: Recipe): Promise<boolean> {
+    if(await this.milkContainer.isEmpty() || await !this.milkContainer.checkFeasibility(recipe.Milk)) {
       this.display.show(Status.DANGER, ErrorCodes.milkEmpty) 
       return false
     }
 
-    if(this.waterContainer.isEmpty() || !this.waterContainer.checkFeasibility(recipe.Water)) {
+    if(await this.waterContainer.isEmpty() || await !this.waterContainer.checkFeasibility(recipe.Water)) {
       this.display.show(Status.DANGER, ErrorCodes.waterEmpty)
       return false
     }
 
-    if(this.coffeePowderContainer.isEmpty() || !this.coffeePowderContainer.checkFeasibility(recipe.Coffee)) {
+    if(await this.coffeePowderContainer.isEmpty() || await !this.coffeePowderContainer.checkFeasibility(recipe.Coffee)) {
       this.display.show(Status.DANGER, ErrorCodes.powderEmpty)
       return false
     }
@@ -74,10 +88,12 @@ export class CoffeeController {
    * @param recipe User input recipe
    */
   public async brew(recipe: Recipe): Promise<void> {
+    this.prep()
     if(!this.switch.isOn()) {
       return
     }
-    if(!this.checkBrew(recipe)) {
+
+    if(await !this.checkBrew(recipe)) {
       return
     }
     await this.display.show(Status.CORRECT, "Brewing Coffee for you ...")
